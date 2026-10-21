@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f7f2e8">
+  <title>Reviews · BS Handlooms</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="announcement">HANDWOVEN WITH LOVE · ROOTED IN TRADITION · MADE TO LAST</div>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="BS Handlooms home"><img class="brand-logo" src="/brand-logo/reviews" alt="BS Handlooms"></a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">☰</button>
+    <nav class="nav" id="nav">
+      <a href="/">Home</a>
+      <a href="/categories">Categories</a>
+      <a href="/new-collection">New Collection</a>
+      <a href="/about">About Us</a>
+      <a href="/reviews" class="active">Reviews</a>
+      <a href="/contact">Contact Us</a>
+      <a href="/products">Cart</a>
+    </nav>
+    <div class="header-actions"><a class="account-link" href="/profile" aria-label="Profile" title="Profile"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"></circle><path d="M4.8 20a7.2 7.2 0 0 1 14.4 0"></path></svg><span class="visually-hidden">Profile</span></a><button class="icon-button" id="searchToggle" aria-label="Search">⌕</button><button class="icon-button bag-button" id="cartToggle" aria-label="Shopping bag"><svg class="bag-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 8.5h13l1 12h-15l1-12Z"></path><path d="M9 8.5V6a3 3 0 0 1 6 0v2.5"></path></svg><span id="cartCount">0</span></button></div>
+  </header>
+
+  <main>
+    <section class="page-hero slim-hero">
+      <div class="page-hero-copy">
+        <p class="eyebrow">CUSTOMER LOVE</p>
+        <h1>Reviews from our community</h1>
+        <p>Real stories from customers who chose thoughtful handloom pieces for their weddings, festivals, and everyday rituals.</p>
+      </div>
+    </section>
+
+    <section class="section review-list">
+      <article class="review-card">
+        <div class="rating">★★★★★</div>
+        <p>“The quality is exceptional and the drape feels so refined. It feels like heirloom fabric without the heaviness.”</p>
+        <strong>Priya M.</strong>
+      </article>
+      <article class="review-card">
+        <div class="rating">★★★★★</div>
+        <p>“Beautiful selection and easy ordering. The product matched the description perfectly and arrived in time for the function.”</p>
+        <strong>Ritika S.</strong>
+      </article>
+      <article class="review-card">
+        <div class="rating">★★★★★</div>
+        <p>“I loved the handloom texture and the care taken in packaging. It's rare to find such thoughtful curation.”</p>
+        <strong>Ananya P.</strong>
+      </article>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <a class="brand footer-brand" href="/"><img class="brand-logo" src="/brand-logo/reviews" alt="BS Handlooms"></a>
+    <p>Honouring the hands behind every weave.</p>
+    <div><a href="/products">Shop</a><a href="/about">Our story</a><a href="/login">My account</a><a href="/admin">Admin</a></div>
+    <small>© <span id="year"></span> BS Handlooms. Made with care.</small>
+  </footer>
+
+  <div class="overlay hidden" id="overlay"></div>
+  <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping cart" aria-hidden="true">
+    <div class="drawer-head"><div><p class="eyebrow">YOUR SELECTION</p><h2>Your bag <span id="drawerCount">(0)</span></h2></div><button class="close-button" id="closeCart" aria-label="Close cart">×</button></div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-bottom"><div class="subtotal"><span>Subtotal</span><strong id="cartSubtotal">₹0</strong></div><small>Delivery charges, if applicable, can be confirmed before dispatch.</small><button class="button button-dark full" id="checkoutButton">Continue to checkout ↗</button><p class="tiny-note">Online payments will be added later. Orders are currently recorded for store follow-up.</p></div>
+  </aside>
+  <div class="modal hidden" id="checkoutModal" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle"><div class="modal-head"><div><p class="eyebrow">ALMOST YOURS</p><h2 id="checkoutTitle">Delivery details</h2></div><button class="close-button" id="closeCheckout" aria-label="Close checkout">×</button></div><form id="checkoutForm" class="checkout-form"><label>Full name<input name="name" required maxlength="100" autocomplete="name"></label><div class="form-two"><label>Email address<input name="email" type="email" required autocomplete="email"></label><label>Phone number<input name="phone" type="tel" required maxlength="30" autocomplete="tel"></label></div><label>Full delivery address<textarea name="address" required maxlength="600" rows="3" autocomplete="street-address"></textarea></label><label>Payment preference<select name="paymentMethod"><option>Pay on delivery</option><option>Cash on Delivery</option></select></label><div class="checkout-total"><span>Order total</span><strong id="checkoutTotal">₹0</strong></div><button class="button button-dark full" type="submit">Place order ↗</button><p class="tiny-note">No online payment is collected by this demo. Confirm order details before placing.</p><div id="checkoutMessage" role="status"></div></form></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="/app.js"></script>
+</body>
+</html>

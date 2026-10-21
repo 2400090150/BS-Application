@@ -1,0 +1,21 @@
+.product-image img,
+.product-card:hover .product-image img {
+  transform: none;
+  transition: none;
+}
+
+.product-image img,
+#newCollectionGrid .product-image img,
+.cart-line img {
+  object-fit: contain;
+}
+
+.detail-image-panel {
+  aspect-ratio: 4 / 5;
+  min-height: 0;
+}
+
+.detail-image-panel img {
+  max-height: none;
+  object-fit: contain;
+}

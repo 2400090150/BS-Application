@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f7f2e8">
+  <title>About Us · BS Handlooms</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="announcement">HANDWOVEN WITH LOVE · ROOTED IN TRADITION · MADE TO LAST</div>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="BS Handlooms home"><img class="brand-logo" src="/brand-logo/about" alt="BS Handlooms"></a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">☰</button>
+    <nav class="nav" id="nav">
+      <a href="/">Home</a>
+      <a href="/categories">Categories</a>
+      <a href="/new-collection">New Collection</a>
+      <a href="/about" class="active">About Us</a>
+      <a href="/reviews">Reviews</a>
+      <a href="/contact">Contact Us</a>
+      <a href="/products">Cart</a>
+    </nav>
+    <div class="header-actions"><a class="account-link" href="/profile" aria-label="Profile" title="Profile"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"></circle><path d="M4.8 20a7.2 7.2 0 0 1 14.4 0"></path></svg><span class="visually-hidden">Profile</span></a><button class="icon-button" id="searchToggle" aria-label="Search">⌕</button><button class="icon-button bag-button" id="cartToggle" aria-label="Shopping bag"><svg class="bag-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 8.5h13l1 12h-15l1-12Z"></path><path d="M9 8.5V6a3 3 0 0 1 6 0v2.5"></path></svg><span id="cartCount">0</span></button></div>
+  </header>
+
+  <main>
+    <section class="page-hero slim-hero page-hero-with-image">
+      <div class="page-hero-copy">
+        <p class="eyebrow">THE STORY BEHIND BS HANDLOOMS</p>
+        <h1>A journey woven with tradition</h1>
+        <p>India's handloom heritage is a beautiful expression of its culture, history, and craftsmanship. For generations, skilled artisans have transformed natural fibres into exquisite fabrics, creating distinctive weaves that reflect the traditions of different regions.</p>
+      </div>
+      <div class="page-hero-image"><img data-site-image="about-feature" src="https://images.unsplash.com/photo-1583391733956-6c78276477e8?auto=format&amp;fit=crop&amp;w=1100&amp;q=85" alt="Handwoven textile detail"></div>
+    </section>
+
+    <section class="section about-story">
+      <div class="about-story-copy">
+        <p>At BS Handlooms, we celebrate this legacy by bringing thoughtfully selected handloom textiles to people who appreciate authenticity, quality, and timeless style. From special occasions to everyday elegance, we believe every piece of fabric carries a story worth preserving.</p>
+      </div>
+    </section>
+
+    <section class="section founder-section">
+      <div class="founder-card">
+        <p class="eyebrow">MEET OUR FOUNDER</p>
+        <h2>Bindhu Govardhanagiri</h2>
+        <p>BS Handlooms was founded by <strong>Bindhu Govardhanagiri</strong> with an appreciation for India's rich textile traditions and the beauty of handwoven fabrics.</p>
+        <p>With a vision to bring traditional craftsmanship closer to modern customers, BS Handlooms celebrates the artistry, cultural significance, and enduring charm of Indian handlooms. The brand aims to make every purchase more than a fashion choice — a connection to heritage, craftsmanship, and generations of textile traditions.</p>
+      </div>
+    </section>
+
+    <section class="section about-purpose">
+      <div class="about-purpose-copy">
+        <p class="eyebrow">WHY WE EXIST</p>
+        <h2>Preserving heritage, one weave at a time</h2>
+        <p>We believe handlooms are more than fabrics. They represent generations of knowledge, artistic expression, and cultural identity.</p>
+        <p>Through BS Handlooms, we aim to celebrate traditional weaving, appreciate the artisans behind every creation, and bring timeless Indian textiles into today's wardrobes.</p>
+      </div>
+    </section>
+
+    <section class="section about-values-section">
+      <div class="about-values-heading">
+        <p class="eyebrow">OUR VALUES</p>
+        <h2>What every weave means to us</h2>
+      </div>
+      <ul class="about-values">
+        <li><strong>Authentic Craftsmanship</strong><span>Celebrating the beauty and uniqueness of handwoven textiles.</span></li>
+        <li><strong>Heritage &amp; Tradition</strong><span>Keeping India's rich textile legacy alive.</span></li>
+        <li><strong>Quality &amp; Care</strong><span>Choosing textiles with attention to detail and lasting appeal.</span></li>
+        <li><strong>Timeless Elegance</strong><span>Bringing traditional Indian aesthetics into modern lifestyles.</span></li>
+        <li><strong>A Meaningful Connection</strong><span>Helping customers appreciate the stories woven into every creation.</span></li>
+      </ul>
+    </section>
+
+    <section class="about-signoff">
+      <p class="eyebrow">BS HANDLOOMS</p>
+      <p>Rooted in tradition. Woven with care. Made to be treasured.</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <a class="brand footer-brand" href="/"><img class="brand-logo" src="/brand-logo/about" alt="BS Handlooms"></a>
+    <p>Honouring the hands behind every weave.</p>
+    <div><a href="/products">Shop</a><a href="/about">Our story</a><a href="/login">My account</a><a href="/admin">Admin</a></div>
+    <small>© <span id="year"></span> BS Handlooms. Made with care.</small>
+  </footer>
+
+  <div class="overlay hidden" id="overlay"></div>
+  <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping cart" aria-hidden="true">
+    <div class="drawer-head"><div><p class="eyebrow">YOUR SELECTION</p><h2>Your bag <span id="drawerCount">(0)</span></h2></div><button class="close-button" id="closeCart" aria-label="Close cart">×</button></div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-bottom"><div class="subtotal"><span>Subtotal</span><strong id="cartSubtotal">₹0</strong></div><small>Delivery charges, if applicable, can be confirmed before dispatch.</small><button class="button button-dark full" id="checkoutButton">Continue to checkout ↗</button><p class="tiny-note">Online payments will be added later. Orders are currently recorded for store follow-up.</p></div>
+  </aside>
+  <div class="modal hidden" id="checkoutModal" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle"><div class="modal-head"><div><p class="eyebrow">ALMOST YOURS</p><h2 id="checkoutTitle">Delivery details</h2></div><button class="close-button" id="closeCheckout" aria-label="Close checkout">×</button></div><form id="checkoutForm" class="checkout-form"><label>Full name<input name="name" required maxlength="100" autocomplete="name"></label><div class="form-two"><label>Email address<input name="email" type="email" required autocomplete="email"></label><label>Phone number<input name="phone" type="tel" required maxlength="30" autocomplete="tel"></label></div><label>Full delivery address<textarea name="address" required maxlength="600" rows="3" autocomplete="street-address"></textarea></label><label>Payment preference<select name="paymentMethod"><option>Pay on delivery</option><option>Cash on Delivery</option></select></label><div class="checkout-total"><span>Order total</span><strong id="checkoutTotal">₹0</strong></div><button class="button button-dark full" type="submit">Place order ↗</button><p class="tiny-note">No online payment is collected by this demo. Confirm order details before placing.</p><div id="checkoutMessage" role="status"></div></form></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="/app.js"></script>
+</body>
+</html>

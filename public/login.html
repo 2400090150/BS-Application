@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f7f2e8">
+  <script>
+    if(location.pathname==='/profile'){document.documentElement.classList.add('profile-checking');document.documentElement.classList.add('profile-page');}
+    if(new URLSearchParams(location.search).get('password-reset')==='required')document.documentElement.classList.add('password-reset-required');
+  </script>
+  <title>Sign in · BS Handlooms</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/auth.css">
+</head>
+<body class="auth-body">
+  <main class="auth-layout">
+    <section class="auth-visual">
+      <a class="brand auth-brand" href="/"><img class="brand-logo" src="/brand-logo/login" alt="BS Handlooms"></a>
+      <div class="visual-caption">
+        <p class="eyebrow">ROOTED IN INDIAN CRAFT</p>
+        <h1>Come back to<br><em>what feels timeless.</em></h1>
+        <p>Discover handwoven treasures, save your favourites and keep every order close at hand.</p>
+        <span class="visual-rule"></span>
+        <small>CRAFTED WITH CARE · WORN WITH PRIDE</small>
+      </div>
+      <div class="visual-index">THE HERITAGE EDIT <span>01 / 03</span></div>
+    </section>
+    <section class="auth-side">
+      <a class="back-link" href="/">← Back to the store</a>
+      <div class="auth-card" id="authCard">
+        <p class="eyebrow" id="formEyebrow">YOUR BS HANDLOOMS ACCOUNT</p>
+        <h2 id="formTitle">Welcome back.</h2>
+        <p class="auth-subtitle" id="formSubtitle">Sign in to continue your handloom journey.</p>
+
+        <div id="loginView">
+          <div id="emailLoginPanel">
+          <form id="loginForm" class="auth-form">
+            <label>Registered Gmail address
+              <input name="identifier" type="email" placeholder="you@gmail.com" autocomplete="username" maxlength="254" required>
+            </label>
+            <label class="login-password-field">
+              <span class="password-heading"><span>Password</span><button type="button" class="inline-link" id="forgotLink">Forgot password?</button></span>
+              <span class="password-control">
+                <input name="password" type="password" placeholder="Enter your password" autocomplete="current-password" minlength="6" required>
+                <button type="button" class="password-toggle" data-toggle-password aria-label="Show password" aria-pressed="false" title="Show password"><svg class="password-eye" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="password-eye-off hidden" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a16 16 0 0 1-3.2 4.1M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7a10.9 10.9 0 0 0 4-.8"/></svg></button>
+              </span>
+            </label>
+            <button class="button button-dark full" type="submit">Sign in <span>↗</span></button>
+            <p class="auth-message" id="loginMessage" role="status"></p>
+          </form>
+          <p class="auth-switch">New to BS Handlooms? <button type="button" class="inline-link" id="showRegister">Create a new account</button></p>
+          </div>
+        </div>
+
+        <div id="registerView" class="hidden">
+          <form id="registerForm" class="auth-form">
+            <label>Full name
+              <input name="name" placeholder="Your full name" autocomplete="name" maxlength="100" required>
+            </label>
+            <label>Username
+              <input name="username" placeholder="Choose a unique username" autocomplete="username" minlength="3" maxlength="30" pattern="[A-Za-z0-9][A-Za-z0-9_.]{2,29}" title="Use 3–30 letters, numbers, dots, or underscores; start with a letter or number." required>
+            </label>
+            <label>Gmail address
+              <input name="email" type="email" placeholder="you@gmail.com" autocomplete="email" maxlength="254" pattern="[A-Za-z0-9._%+\-]+@gmail[.]com" title="Use a Gmail address ending in @gmail.com." required>
+            </label>
+            <label>Password
+              <span class="password-control">
+                <input name="password" type="password" placeholder="6–12 characters" minlength="6" maxlength="12" autocomplete="new-password" required>
+                <button type="button" class="password-toggle" data-toggle-password aria-label="Show password" aria-pressed="false" title="Show password"><svg class="password-eye" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="password-eye-off hidden" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a16 16 0 0 1-3.2 4.1M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7a10.9 10.9 0 0 0 4-.8"/></svg></button>
+              </span>
+            </label>
+            <label>Confirm password
+              <span class="password-control">
+                <input name="confirm" type="password" placeholder="6–12 characters" minlength="6" maxlength="12" autocomplete="new-password" required>
+                <button type="button" class="password-toggle" data-toggle-password aria-label="Show password" aria-pressed="false" title="Show password"><svg class="password-eye" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="password-eye-off hidden" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a16 16 0 0 1-3.2 4.1M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7a10.9 10.9 0 0 0 4-.8"/></svg></button>
+              </span>
+            </label>
+            <label>Contact number
+              <input name="phone" type="tel" placeholder="10-digit Indian mobile number" autocomplete="tel" inputmode="tel" pattern="(\+?91[\s\-]?)?[6-9][0-9]{9}" maxlength="16" required>
+            </label>
+            <label>Address
+              <textarea name="address" rows="3" placeholder="House, street, city, state and PIN code" autocomplete="street-address" maxlength="600" required></textarea>
+            </label>
+            <button class="button button-dark full" type="submit">Create account <span>↗</span></button>
+            <p class="auth-message" id="registerMessage" role="status"></p>
+          </form>
+          <p class="auth-switch">Already have an account? <button type="button" class="inline-link" id="showLogin">Sign in</button></p>
+        </div>
+
+        <div id="forgotView" class="hidden">
+          <p class="auth-subtitle">Enter your registered Gmail address to submit a reset request or check an existing request. An administrator will review it before you can choose a new password.</p>
+          <form id="passwordResetRequestForm" class="auth-form">
+            <label>Registered Gmail address
+              <input name="email" type="email" placeholder="you@gmail.com" autocomplete="email" maxlength="254" required>
+            </label>
+            <button class="button button-dark full" id="passwordResetRequestButton" type="submit">Send Request <span>↗</span></button>
+            <p class="auth-message" id="passwordResetRequestMessage" role="status" aria-live="polite"></p>
+          </form>
+          <p class="auth-message" id="passwordResetPendingMessage" role="status" aria-live="polite">Checking your password-reset request…</p>
+          <form id="passwordResetForm" class="auth-form hidden">
+            <p class="section-hint" id="passwordResetApprovedEmail"></p>
+            <label>New Password
+              <span class="password-control">
+                <input name="password" type="password" minlength="6" maxlength="12" title="Use 6–12 characters." autocomplete="new-password" required>
+                <button type="button" class="password-toggle" data-toggle-password aria-label="Show password" aria-pressed="false" title="Show password"><svg class="password-eye" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="password-eye-off hidden" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a16 16 0 0 1-3.2 4.1M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7a10.9 10.9 0 0 0 4-.8"/></svg></button>
+              </span>
+            </label>
+            <label>Confirm Password
+              <span class="password-control">
+                <input name="confirmPassword" type="password" minlength="6" maxlength="12" autocomplete="new-password" required>
+                <button type="button" class="password-toggle" data-toggle-password aria-label="Show password" aria-pressed="false" title="Show password"><svg class="password-eye" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="password-eye-off hidden" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a16 16 0 0 1-3.2 4.1M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7a10.9 10.9 0 0 0 4-.8"/></svg></button>
+              </span>
+            </label>
+            <small class="password-strength-hint">Use 6–12 characters.</small>
+            <button class="button button-dark full" type="submit">Save Password <span>↗</span></button>
+            <p class="auth-message" id="passwordResetMessage" role="status" aria-live="polite"></p>
+          </form>
+          <p class="auth-switch"><button type="button" class="inline-link" id="backToLogin">← Back to sign in</button></p>
+        </div>
+
+        <div id="accountView" class="hidden">
+          <div class="account-page-heading">
+            <div><p class="eyebrow">BS HANDLOOMS · MY ACCOUNT</p><h2>My Account</h2><p class="auth-subtitle" id="accountGreeting"></p></div>
+            <div class="account-header-actions"><button class="button button-dark hidden" id="openAdminPortal" type="button">Open administrator panel ↗</button><a class="button button-outline account-back-store" href="/">Back to store</a></div>
+          </div>
+          <section class="account-section" aria-labelledby="profileHeading">
+            <div class="section-heading">
+              <h3 id="profileHeading">Personal information</h3>
+              <button class="inline-link" id="editProfile" type="button">Edit profile</button>
+            </div>
+            <dl class="profile-details" id="profileDetails">
+              <div><dt>Full name</dt><dd id="profileName">Not added yet</dd></div>
+              <div><dt>Username</dt><dd id="profileUsername">Not added yet</dd></div>
+              <div><dt>Registered Gmail address</dt><dd id="profileEmail">Not added yet</dd></div>
+              <div><dt>Contact number</dt><dd id="profilePhone">Not added yet</dd></div>
+              <div><dt>Account created</dt><dd id="profileCreated">Not added yet</dd></div>
+            </dl>
+            <form id="profileForm" class="auth-form">
+              <label>Full name<input name="name" required maxlength="100" autocomplete="name" disabled></label>
+              <label>Phone number<input name="phone" type="tel" maxlength="30" autocomplete="tel" disabled></label>
+              <textarea class="hidden" name="address" maxlength="600" autocomplete="street-address" disabled></textarea>
+              <button class="button button-dark full hidden" id="saveProfile" type="submit">Save changes</button>
+              <button class="button button-outline full hidden" id="cancelProfile" type="button">Cancel</button>
+            </form>
+            <p class="auth-message" id="profileMessage" role="status" aria-live="polite"></p>
+          </section>
+          <section class="account-section" aria-labelledby="primaryAddressHeading">
+            <div class="section-heading">
+              <div><h3 id="primaryAddressHeading">Primary delivery address</h3><p class="section-hint">Your preferred address for delivery.</p></div>
+              <button class="button button-outline address-add" id="addPrimaryAddress" type="button">+ Add primary address</button>
+            </div>
+            <div id="primaryAddressContainer" aria-live="polite"><p class="muted">Loading your address…</p></div>
+          </section>
+          <section class="account-section address-section" aria-labelledby="addressesHeading">
+            <div class="section-heading">
+              <div><h3 id="addressesHeading">Additional delivery addresses</h3><p class="section-hint" id="addressCount">Loading your addresses…</p></div>
+              <button class="button button-outline address-add" id="addAddress" type="button">+ Add address</button>
+            </div>
+            <p class="auth-message" id="addressMessage" role="status" aria-live="polite"></p>
+            <div id="addressesContainer" aria-live="polite"><p class="muted">Loading your addresses…</p></div>
+            <form id="addressForm" class="auth-form address-form hidden" novalidate>
+              <h4 id="addressFormTitle">Add a delivery address</h4>
+              <div class="address-fields">
+                <label>Recipient name<input name="recipient_name" required maxlength="100" autocomplete="name"></label>
+                <label>Phone number<input name="phone" type="tel" required maxlength="10" pattern="[0-9]{10}" inputmode="numeric" autocomplete="tel" placeholder="10-digit mobile number"></label>
+                <label class="address-wide">House / flat / building<input name="house" required maxlength="160" autocomplete="address-line1"></label>
+                <label class="address-wide">Street / area<input name="street" required maxlength="600" autocomplete="address-line2"></label>
+                <label>City<input name="city" required maxlength="100" autocomplete="address-level2"></label>
+                <label>State<input name="state" required maxlength="100" autocomplete="address-level1"></label>
+                <label>PIN code<input name="pin_code" type="text" required maxlength="6" pattern="[0-9]{6}" inputmode="numeric" autocomplete="postal-code" placeholder="6-digit PIN"></label>
+                <label>Country<input name="country" required maxlength="100" autocomplete="country-name" value="India"></label>
+                <label>Landmark <span class="optional-label">Optional</span><input name="landmark" maxlength="160"></label>
+                <label>Address label<select name="label" required><option value="Home">Home</option><option value="Work">Work</option><option value="Other">Other</option></select></label>
+              </div>
+              <label class="default-choice"><input name="is_default" type="checkbox"> Make this my default address</label>
+              <div class="address-form-actions">
+                <button class="button button-dark" id="saveAddress" type="submit">Save address</button>
+                <button class="button button-outline" id="cancelAddress" type="button">Cancel</button>
+              </div>
+            </form>
+          </section>
+          <div class="account-orders">
+            <h3>Your orders</h3>
+            <aside class="order-policy" aria-label="Cancellation and return policy">
+              <strong>Order updates &amp; cancellation policy</strong>
+              <p>Track each order's status here. You may cancel while an order is awaiting administrator confirmation. Once confirmed, it can no longer be cancelled by the customer. Returns are not accepted after delivery.</p>
+            </aside>
+            <div id="ordersContainer"><p class="muted">Loading your orders…</p></div>
+          </div>
+          <section class="account-section account-actions" aria-labelledby="accountActionsHeading">
+            <h3 id="accountActionsHeading">Account actions</h3>
+            <div class="account-action-buttons">
+              <button class="button button-outline" id="changePasswordToggle" type="button">Change password</button>
+              <button class="button button-outline" id="logoutCustomer" type="button">Log out</button>
+            </div>
+            <form id="changePasswordForm" class="auth-form address-form hidden" novalidate>
+              <h4>Change password</h4>
+              <label>Current password<input name="currentPassword" type="password" autocomplete="current-password" required></label>
+              <label>New password<input name="password" type="password" autocomplete="new-password" minlength="6" maxlength="12" required></label>
+              <label>Confirm new password<input name="confirmPassword" type="password" autocomplete="new-password" minlength="6" maxlength="12" required></label>
+              <div class="address-form-actions"><button class="button button-dark" id="savePassword" type="submit">Save password</button><button class="button button-outline" id="cancelPassword" type="button">Cancel</button></div>
+            </form>
+            <p class="auth-message" id="passwordMessage" role="status" aria-live="polite"></p>
+          </section>
+        </div>
+      </div>
+      <p class="auth-footnote">Your details are used to manage your account and orders.</p>
+    </section>
+  </main>
+  <script src="/auth.js"></script>
+</body>
+</html>
