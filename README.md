@@ -26,6 +26,14 @@ A responsive Indian handloom storefront with a product catalogue, category filte
 
 The database is created automatically at `data/store.sqlite`; sample products are inserted on first run.
 
+## Deploy on Render
+1. Push this repository to GitHub and create a new Render Blueprint using `render.yaml`.
+2. Render creates the Node web service and a persistent disk for the SQLite database and uploaded images. The disk requires a paid Render plan.
+3. The first start safely copies the committed `data/store.sqlite` and uploaded images to the persistent disk if it is empty. Later deploys keep the disk data.
+4. Render generates `SESSION_SECRET` and sets production mode and the persistent data directory. Do not add `.env` or secrets to Git.
+5. To enable email-based password recovery, add `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`, and `APP_BASE_URL` in the Render service's environment settings. Google sign-in and Drive image import are optional; set `GOOGLE_CLIENT_ID`, `GOOGLE_DRIVE_API_KEY`, and `GOOGLE_DRIVE_APP_ID` to enable them.
+6. After deployment, open the service URL and verify the storefront and sign-in pages. Configure the deployed domain in Google OAuth settings if Google sign-in is enabled.
+
 ## Included
 - Mobile-responsive BS Handlooms storefront with premium traditional visual style
 - Sample products across sarees, clothing, dupattas, fabrics, and home & living
@@ -57,7 +65,7 @@ The database is created automatically at `data/store.sqlite`; sample products ar
 This is a working starter project, not yet a production-hardened commerce deployment.
 - Online payment gateways are intentionally not connected. The checkout currently records an order with a payment preference; it does not charge the customer.
 - Replace sample product images, prices, descriptions and inventory with your real catalogue and use images you own or are licensed to use.
-- Configure HTTPS, a strong secret, a production session store (not Express MemoryStore), rate limiting, CSRF protection, backups, privacy/return/shipping policies, and monitoring before launch.
+- Configure HTTPS, rate limiting, CSRF protection, backups, privacy/return/shipping policies, and monitoring before launch. Sessions are stored in SQLite and require the same persistent storage as the database.
 - Newsletter signup is a visual placeholder and does not store emails.
 - For public hosting, use a persistent disk for SQLite or migrate to a managed database. Set `NODE_ENV=production` and configure the session cookie/HTTPS correctly.
 - Add a proper payment gateway later (for example, Razorpay) using server-side order creation and signature verification; never trust client-side payment confirmation.

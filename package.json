@@ -5,7 +5,7 @@
   "description": "Responsive handloom ecommerce starter with product and order admin",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node scripts/initialize-persistent-data.js && node server.js",
     "dev": "node --watch server.js"
   },
   "engines": {
