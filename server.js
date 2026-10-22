@@ -404,18 +404,6 @@ const legacyAddress = db.prepare(`
 `);
 legacyAddress.run();
 const count = db.prepare("SELECT COUNT(*) AS n FROM products").get().n;
-if (!count) {
-  const seed = [
-    ["Sujani Cotton Saree","Sarees",1899,"Soft handloom cotton with a timeless border.","https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=900&q=85",8,1],
-    ["Temple Border Silk Saree","Sarees",3499,"A festive weave with a traditional temple-inspired border.","https://images.unsplash.com/photo-1583391733956-6c78276477e8?auto=format&fit=crop&w=900&q=85",5,1],
-    ["Indigo Handwoven Dupatta","Dupattas",899,"Everyday elegance in a rich indigo palette.","https://images.unsplash.com/photo-1601924994987-69e26d50dc26?auto=format&fit=crop&w=900&q=85",12,0],
-    ["Natural Cotton Fabric","Fabrics",599,"Breathable cotton fabric for your own creations.","https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=900&q=85",20,0],
-    ["Handloom Kurta Set","Clothing",1599,"Easy, graceful comfort for everyday wear.","https://images.unsplash.com/photo-1583391733981-8b5308a3f3c7?auto=format&fit=crop&w=900&q=85",7,1],
-    ["Woven Table Runner","Home & Living",749,"A handcrafted accent for a warm home.","https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=85",9,0]
-  ];
-  const ins = db.prepare("INSERT INTO products(name,category,price,description,image,stock,featured) VALUES(?,?,?,?,?,?,?)");
-  db.transaction(rows => rows.forEach(p => ins.run(...p)))(seed);
-}
 const defaultCategories = [
   "Sarees","Clothing","Dupattas","Fabrics","Home & Living","Accessories",
   "Handloom Sarees","Silk Sarees","Cotton Sarees","Traditional Sarees","Designer Sarees","Bridal Sarees","Linen Sarees",
