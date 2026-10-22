@@ -14,6 +14,36 @@ const safe = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
   "'": '&#39;'
 }[char]));
 
+const excelXmlEscape = (value) => String(value ?? '')
+  .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '')
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&apos;');
+
+function downloadExcel(filename, sheetName, columns, records) {
+  const rows = [columns.map((column) => column.label), ...records.map((record) => columns.map((column) => record[column.key] ?? ''))];
+  const worksheetRows = rows.map((row) => `
+    <Row>${row.map((value) => {
+      const type = typeof value === 'number' && Number.isFinite(value) ? 'Number' : 'String';
+      return `<Cell><Data ss:Type="${type}">${type === 'Number' ? value : excelXmlEscape(value)}</Data></Cell>`;
+    }).join('')}</Row>`).join('');
+  const safeSheetName = sheetName.replace(/[\\/?*:[\]]/g, '_').slice(0, 31);
+  const workbook = `<?xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?>
+    <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+      <Worksheet ss:Name="${excelXmlEscape(safeSheetName)}"><Table>${worksheetRows}</Table></Worksheet>
+    </Workbook>`;
+  const url = URL.createObjectURL(new Blob([workbook], { type: 'application/vnd.ms-excel;charset=utf-8' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${filename}-${new Date().toISOString().slice(0, 10)}.xls`;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 async function api(url, options = {}) {
   const response = await fetch(url, {
     headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
@@ -48,6 +78,8 @@ let collectionItems = [];
 let banners = [];
 let offers = [];
 let customers = [];
+let adminOrders = [];
+let orderDataAuditEntries = [];
 let siteImages = [];
 let siteImageLibrary = [];
 let siteImageDriveConfig = {};
@@ -1180,6 +1212,7 @@ async function loadOrders() {
   if ($('#orderDateTo')?.value) params.set('to', $('#orderDateTo').value);
   params.set('direction', $('#orderDateDirection')?.value || 'desc');
   const orders = await api(`/api/admin/orders?${params.toString()}`);
+  adminOrders = orders;
   const container = $('#ordersList');
   if (!container) return;
 
@@ -1309,6 +1342,7 @@ async function loadAdminAccess() {
 
 async function loadOrderDataAudit() {
   const entries = await api('/api/admin/orders/clear-audit');
+  orderDataAuditEntries = entries;
   const table = $('#orderDataClearAudit');
   if (!table) return;
   table.innerHTML = entries.length
@@ -1340,6 +1374,7 @@ function setupOrderDataPanel() {
           <h2>Clear order data</h2>
           <p class="muted">Permanently removes all customer and admin order records, status timelines, and stock-adjustment history. Products, customer accounts, and current inventory are retained; inventory is not recalculated.</p>
         </div>
+        <button class="button button-outline" id="exportOrderData" type="button">Download Excel</button>
       </div>
       <form id="clearOrderDataForm" class="clear-order-data-form">
         <label for="clearOrderDataConfirmation">Type <strong>CLEAR ALL ORDERS</strong> to confirm</label>
@@ -1354,6 +1389,87 @@ function setupOrderDataPanel() {
 }
 
 setupOrderDataPanel();
+
+function exportOrdersToExcel() {
+  const records = adminOrders.map((order) => ({
+    id: order.id,
+    created_at: formatIST(order.created_at),
+    customer_name: order.customer_name,
+    email: order.email,
+    phone: order.phone,
+    address: order.address,
+    items: (order.items || []).map((item) => `${item.name} x ${item.quantity}`).join('; '),
+    total: Number(order.total || 0),
+    payment_method: order.payment_method,
+    payment_status: order.payment_status,
+    status: order.status,
+    cancellation_reason: order.cancellation_reason || '',
+    restored_quantity: Number(order.restored_quantity || 0)
+  }));
+  downloadExcel('bs-handlooms-orders', 'Orders', [
+    { label: 'Order ID', key: 'id' },
+    { label: 'Created (IST)', key: 'created_at' },
+    { label: 'Customer', key: 'customer_name' },
+    { label: 'Email', key: 'email' },
+    { label: 'Phone', key: 'phone' },
+    { label: 'Delivery address', key: 'address' },
+    { label: 'Items', key: 'items' },
+    { label: 'Total (INR)', key: 'total' },
+    { label: 'Payment method', key: 'payment_method' },
+    { label: 'Payment status', key: 'payment_status' },
+    { label: 'Order status', key: 'status' },
+    { label: 'Cancellation reason', key: 'cancellation_reason' },
+    { label: 'Quantity restored', key: 'restored_quantity' }
+  ], records);
+}
+
+function exportCustomersToExcel() {
+  const records = customers.map((customer) => ({
+    name: customer.name,
+    email: customer.email,
+    phone: customer.phone || '',
+    address: customer.address || '',
+    created_at: formatIST(customer.created_at),
+    updated_at: formatIST(customer.updated_at)
+  }));
+  downloadExcel('bs-handlooms-customers', 'Customers', [
+    { label: 'Customer', key: 'name' },
+    { label: 'Email', key: 'email' },
+    { label: 'Phone', key: 'phone' },
+    { label: 'Address', key: 'address' },
+    { label: 'Registered (IST)', key: 'created_at' },
+    { label: 'Last updated (IST)', key: 'updated_at' }
+  ], records);
+}
+
+function exportOrderDataToExcel() {
+  const records = orderDataAuditEntries.map((entry) => ({
+    actor_email: entry.actor_email,
+    deleted_orders: Number(entry.deleted_orders || 0),
+    created_at: formatIST(entry.created_at)
+  }));
+  downloadExcel('bs-handlooms-order-data-audit', 'Order Data', [
+    { label: 'Cleared by', key: 'actor_email' },
+    { label: 'Orders removed', key: 'deleted_orders' },
+    { label: 'Date (IST)', key: 'created_at' }
+  ], records);
+}
+
+function addExcelExportButton(panelSelector, buttonId, onClick) {
+  const panelHeading = $(`${panelSelector} .panel-heading`);
+  if (!panelHeading || $(`#${buttonId}`)) return;
+  const button = document.createElement('button');
+  button.id = buttonId;
+  button.type = 'button';
+  button.className = 'button button-outline';
+  button.textContent = 'Download Excel';
+  button.addEventListener('click', onClick);
+  panelHeading.append(button);
+}
+
+addExcelExportButton('#ordersPanel', 'exportOrders', exportOrdersToExcel);
+addExcelExportButton('#customersPanel', 'exportCustomers', exportCustomersToExcel);
+$('#exportOrderData')?.addEventListener('click', exportOrderDataToExcel);
 
 function setupReviewContactPanels() {
   const tabs = $('.admin-tabs');
