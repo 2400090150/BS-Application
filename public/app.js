@@ -33,6 +33,11 @@ function toast(msg) {
   window.toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
 }
 
+function redirectToLoginForCheckout() {
+  const returnTo = `${location.pathname}${location.search}${location.hash}`;
+  location.assign(`/login?returnTo=${encodeURIComponent(returnTo)}`);
+}
+
 async function api(url, options = {}) {
   const r = await fetch(url, {
     headers: { "Content-Type": "application/json", ...(options.headers || {}) },
@@ -41,7 +46,11 @@ async function api(url, options = {}) {
   });
   let data = {};
   try { data = await r.json(); } catch (e) {}
-  if (!r.ok) throw new Error(data.error || "Something went wrong.");
+  if (!r.ok) {
+    const error = new Error(data.error || "Something went wrong.");
+    error.status = r.status;
+    throw error;
+  }
   return data;
 }
 
@@ -542,9 +551,19 @@ function bindSharedStorefront() {
 
   const checkoutButton = $("#checkoutButton");
   if (checkoutButton) {
-    checkoutButton.addEventListener("click", () => {
+    checkoutButton.addEventListener("click", async () => {
       const lines = getCartLines();
       if (!lines.length) return;
+      try {
+        const auth = await api("/api/auth/me");
+        if (!auth.authenticated) {
+          redirectToLoginForCheckout();
+          return;
+        }
+      } catch (error) {
+        toast(error.message);
+        return;
+      }
       closeCart();
       const checkoutModal = $("#checkoutModal");
       const checkoutMessage = $("#checkoutMessage");
@@ -621,6 +640,10 @@ function bindSharedStorefront() {
           document.body.style.overflow = "";
         }, 5000);
       } catch (err) {
+        if (err.status === 401) {
+          redirectToLoginForCheckout();
+          return;
+        }
         if (checkoutMessage) checkoutMessage.innerHTML = `<p class="error-text">${safe(err.message)}</p>`;
       } finally {
         if (btn) {

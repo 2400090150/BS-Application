@@ -945,7 +945,7 @@ app.get("/api/products/:id", (req,res) => {
   if (!p) return res.status(404).json({error:"Product not found."});
   res.json(safeProduct(p));
 });
-app.post("/api/orders", (req,res) => {
+app.post("/api/orders", requireCustomer, (req,res) => {
   const { customer, items, paymentMethod } = req.body || {};
   if (!customer || !customer.name || !customer.email || !customer.phone || !customer.address || !Array.isArray(items) || !items.length)
     return res.status(400).json({error:"Please complete all delivery details and add at least one item."});

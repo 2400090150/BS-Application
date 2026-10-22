@@ -105,6 +105,14 @@ function escapeHtml(value) {
 }
 
 function redirectToStore() {
+  const returnTo = new URLSearchParams(location.search).get('returnTo');
+  if (returnTo) {
+    const destination = new URL(returnTo, window.location.origin);
+    if (destination.origin === window.location.origin) {
+      window.location.assign(destination.href);
+      return;
+    }
+  }
   window.location.assign('/');
 }
 
