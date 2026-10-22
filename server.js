@@ -21,6 +21,25 @@ db.pragma("journal_mode = WAL");
 db.pragma("foreign_keys = ON");
 db.exec(`
 CREATE TABLE IF NOT EXISTS admins (id INTEGER PRIMARY KEY, email TEXT UNIQUE NOT NULL, password_hash TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS reviews (
+ id INTEGER PRIMARY KEY AUTOINCREMENT,
+ customer_id INTEGER NOT NULL,
+ customer_name TEXT NOT NULL,
+ customer_email TEXT NOT NULL,
+ rating INTEGER NOT NULL CHECK(rating BETWEEN 1 AND 5),
+ description TEXT NOT NULL,
+ status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected')),
+ created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+ FOREIGN KEY(customer_id) REFERENCES customers(id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS reviews_status_created_idx ON reviews(status,created_at DESC);
+CREATE TABLE IF NOT EXISTS contact_details (
+ id INTEGER PRIMARY KEY CHECK(id=1),
+ phone TEXT NOT NULL,
+ email TEXT NOT NULL,
+ address TEXT NOT NULL,
+ updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
 CREATE TABLE IF NOT EXISTS admin_access_audit (
  id INTEGER PRIMARY KEY AUTOINCREMENT,
  actor_email TEXT NOT NULL,
@@ -221,6 +240,8 @@ CREATE TABLE IF NOT EXISTS order_data_clear_audit (
  created_at TEXT NOT NULL
 );
 `);
+db.prepare("INSERT OR IGNORE INTO contact_details(id,phone,email,address) VALUES(1,?,?,?)")
+  .run("+91 86880 12050","bs@handlooms.in","Hyderabad, India");
 db.exec("UPDATE password_reset_requests SET status=UPPER(status)");
 db.exec("UPDATE password_reset_requests SET status='REJECTED' WHERE status='VERIFIED'");
 const authCustomerColumns = db.prepare("PRAGMA table_info(customers)").all().map(column => column.name);
@@ -618,11 +639,33 @@ function requireAdmin(req,res,next) {
   next();
 }
 function requireMainAdmin(req,res,next) {
-  if (!req.admin?.isMainAdmin) return res.status(403).json({error:"Only the designated Main Admin can manage administrator access."});
+  if (!req.admin?.isMainAdmin) return res.status(403).json({error:"Only the designated Main Admin can perform this action."});
   next();
 }
 app.get("/api/site-images", (req,res) => {
   res.json(db.prepare("SELECT key,label,image,sort_order FROM site_images WHERE key NOT LIKE 'brand-logo-%' AND key!='brand-logo' ORDER BY sort_order,key").all());
+});
+app.get("/api/contact", (req,res) => {
+  res.json(db.prepare("SELECT phone,email,address FROM contact_details WHERE id=1").get());
+});
+app.get("/api/reviews", (req,res) => {
+  res.json(db.prepare(`
+    SELECT customer_name AS name,rating,description,created_at
+    FROM reviews WHERE status='approved' ORDER BY created_at DESC,id DESC
+  `).all());
+});
+app.post("/api/reviews", requireCustomer, (req,res) => {
+  const description=String((req.body||{}).description||"").trim();
+  const rating=Number((req.body||{}).rating);
+  if (!Number.isInteger(rating)||rating<1||rating>5) return res.status(400).json({error:"Choose a rating from 1 to 5 stars."});
+  if (!description||description.length>2000) return res.status(400).json({error:"Write a review of up to 2,000 characters."});
+  const customer=db.prepare("SELECT id,name,email FROM customers WHERE id=?").get(req.session.customerId);
+  if (!customer) return res.status(401).json({error:"Please sign in to submit a review."});
+  const result=db.prepare(`
+    INSERT INTO reviews(customer_id,customer_name,customer_email,rating,description,status)
+    VALUES(?,?,?,?,?,'pending')
+  `).run(customer.id,customer.name,customer.email,rating,description);
+  res.status(201).json({message:"Thank you. Your review has been submitted for approval.",id:Number(result.lastInsertRowid)});
 });
 app.get("/api/admin/site-images", requireAdmin, (req,res) => {
   res.json(db.prepare("SELECT key,label,image,default_image,previous_image,sort_order FROM site_images WHERE key!='brand-logo' ORDER BY CASE WHEN key LIKE 'brand-logo-%' THEN 0 ELSE 1 END,sort_order,key").all());
@@ -1098,6 +1141,13 @@ app.post("/api/auth/login", (req,res) => {
   req.session.regenerate(err=>{if(err)return res.status(500).json({error:"Could not start your session."}); req.session.customerId=c.id; res.json({customer:publicCustomer(c)});});
 });
 app.get("/api/auth/me", (req,res) => { const c=req.session.customerId && db.prepare("SELECT * FROM customers WHERE id=?").get(req.session.customerId); res.json({authenticated:!!c,customer:c?publicCustomer(c):null}); });
+app.get("/api/auth/reviews", requireCustomer, (req,res) => {
+  const reviews=db.prepare(`
+    SELECT id,rating,description,status,created_at
+    FROM reviews WHERE customer_id=? ORDER BY created_at DESC,id DESC
+  `).all(req.session.customerId);
+  res.json({reviews});
+});
 app.put("/api/auth/password", (req,res) => {
   const customerId=Number(req.session.customerId);
   if (!Number.isInteger(customerId)||customerId<=0)
@@ -1675,6 +1725,45 @@ app.get("/api/admin/me", (req,res) => {
   const email=String(admin.email).toLowerCase();
   const isMainAdmin=admin.role==="owner"&&email===MAIN_ADMIN_EMAIL&&Boolean(db.prepare("SELECT 1 FROM customers WHERE email=? COLLATE NOCASE").get(MAIN_ADMIN_EMAIL));
   res.json({authenticated:true,email,role:isMainAdmin?"owner":"admin",isMainAdmin});
+});
+app.get("/api/admin/contact", requireAdmin, (req,res) => {
+  res.json({
+    ...db.prepare("SELECT phone,email,address,updated_at FROM contact_details WHERE id=1").get(),
+    canEdit: req.admin.isMainAdmin
+  });
+});
+app.put("/api/admin/contact", requireAdmin, requireMainAdmin, (req,res) => {
+  const body=req.body||{};
+  const phone=String(body.phone||"").trim();
+  const email=String(body.email||"").trim().toLowerCase();
+  const address=String(body.address||"").trim();
+  if (!phone||phone.length>30||!/^\+?[0-9][0-9\s().-]{5,28}[0-9]$/.test(phone))
+    return res.status(400).json({error:"Enter a valid contact phone number."});
+  if (!email||email.length>254||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    return res.status(400).json({error:"Enter a valid contact email address."});
+  if (!address||address.length>300)
+    return res.status(400).json({error:"Enter an address of up to 300 characters."});
+  const updatedAt=serverTimestamp();
+  db.prepare("UPDATE contact_details SET phone=?,email=?,address=?,updated_at=? WHERE id=1")
+    .run(phone,email,address,updatedAt);
+  res.json({message:"Contact details saved and published.",phone,email,address,updated_at:updatedAt,canEdit:true});
+});
+app.get("/api/admin/reviews", requireAdmin, (req,res) => {
+  const status=String(req.query.status||"all").toLowerCase();
+  if (!["all","pending","approved","rejected"].includes(status))
+    return res.status(400).json({error:"Choose a valid review status filter."});
+  const reviews=status==="all"
+    ? db.prepare("SELECT id,customer_name,customer_email,rating,description,status,created_at FROM reviews ORDER BY created_at DESC,id DESC").all()
+    : db.prepare("SELECT id,customer_name,customer_email,rating,description,status,created_at FROM reviews WHERE status=? ORDER BY created_at DESC,id DESC").all(status);
+  res.json({reviews});
+});
+app.patch("/api/admin/reviews/:id/status", requireAdmin, (req,res) => {
+  const status=String((req.body||{}).status||"").toLowerCase();
+  if (!["approved","rejected"].includes(status))
+    return res.status(400).json({error:"Review status must be approved or rejected."});
+  const result=db.prepare("UPDATE reviews SET status=? WHERE id=?").run(status,Number(req.params.id));
+  if (!result.changes) return res.status(404).json({error:"Review not found."});
+  res.json({message:`Review ${status}.`});
 });
 app.get("/api/admin/access-management", requireAdmin, requireMainAdmin, (req,res) => {
   const admins=db.prepare(`

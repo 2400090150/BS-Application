@@ -11,6 +11,7 @@
   <title>Sign in · BS Handlooms</title>
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/auth.css">
+  <link rel="stylesheet" href="/review-ui.css">
 </head>
 <body class="auth-body">
   <main class="auth-layout">
@@ -187,6 +188,24 @@
             </aside>
             <div id="ordersContainer"><p class="muted">Loading your orders…</p></div>
           </div>
+          <section class="account-section" aria-labelledby="customerReviewsHeading">
+            <div class="section-heading"><div><h3 id="customerReviewsHeading">Your reviews</h3><p class="section-hint">Reviews are published only after approval by our team.</p></div></div>
+            <form id="accountReviewForm" class="auth-form review-form">
+              <label>Your rating
+                <div class="review-star-picker" role="radiogroup" aria-label="Choose a rating from 1 to 5 stars">
+                  <button type="button" class="review-star" data-review-rating="1" role="radio" aria-checked="false" aria-label="1 star">★</button>
+                  <button type="button" class="review-star" data-review-rating="2" role="radio" aria-checked="false" aria-label="2 stars">★</button>
+                  <button type="button" class="review-star" data-review-rating="3" role="radio" aria-checked="false" aria-label="3 stars">★</button>
+                  <button type="button" class="review-star" data-review-rating="4" role="radio" aria-checked="false" aria-label="4 stars">★</button>
+                  <button type="button" class="review-star" data-review-rating="5" role="radio" aria-checked="false" aria-label="5 stars">★</button>
+                </div>
+              </label>
+              <label>Review<textarea name="description" rows="4" maxlength="2000" required placeholder="Tell us about the product or your shopping experience"></textarea></label>
+              <button class="button button-dark" type="submit">Submit review</button>
+              <p id="accountReviewMessage" class="auth-message" role="status" aria-live="polite"></p>
+            </form>
+            <div id="accountReviews" class="customer-reviews-list" aria-live="polite"><p class="muted">Loading your reviews…</p></div>
+          </section>
           <section class="account-section account-actions" aria-labelledby="accountActionsHeading">
             <h3 id="accountActionsHeading">Account actions</h3>
             <div class="account-action-buttons">

@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#f7f2e8">
   <title>Reviews · BS Handlooms</title>
   <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/review-ui.css">
 </head>
 <body>
   <div class="announcement">HANDWOVEN WITH LOVE · ROOTED IN TRADITION · MADE TO LAST</div>
@@ -33,22 +34,18 @@
       </div>
     </section>
 
-    <section class="section review-list">
-      <article class="review-card">
-        <div class="rating">★★★★★</div>
-        <p>“The quality is exceptional and the drape feels so refined. It feels like heirloom fabric without the heaviness.”</p>
-        <strong>Priya M.</strong>
-      </article>
-      <article class="review-card">
-        <div class="rating">★★★★★</div>
-        <p>“Beautiful selection and easy ordering. The product matched the description perfectly and arrived in time for the function.”</p>
-        <strong>Ritika S.</strong>
-      </article>
-      <article class="review-card">
-        <div class="rating">★★★★★</div>
-        <p>“I loved the handloom texture and the care taken in packaging. It's rare to find such thoughtful curation.”</p>
-        <strong>Ananya P.</strong>
-      </article>
+    <section class="section review-page">
+      <div id="reviewSubmission" class="review-submission" aria-live="polite">
+        <p class="eyebrow">SHARE YOUR EXPERIENCE</p>
+        <h2>Your review</h2>
+        <p class="muted">Sign in to share your experience. Every review is checked by our team before it appears here.</p>
+        <a class="button button-outline" href="/login">Sign in to write a review</a>
+      </div>
+      <div class="review-public-section">
+        <p class="eyebrow">CUSTOMER STORIES</p>
+        <h2>Reviews from our community</h2>
+        <div id="publicReviews" class="review-list" aria-live="polite"><p class="muted">Loading approved reviews…</p></div>
+      </div>
     </section>
   </main>
 
@@ -68,5 +65,6 @@
   <div class="modal hidden" id="checkoutModal" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle"><div class="modal-head"><div><p class="eyebrow">ALMOST YOURS</p><h2 id="checkoutTitle">Delivery details</h2></div><button class="close-button" id="closeCheckout" aria-label="Close checkout">×</button></div><form id="checkoutForm" class="checkout-form"><label>Full name<input name="name" required maxlength="100" autocomplete="name"></label><div class="form-two"><label>Email address<input name="email" type="email" required autocomplete="email"></label><label>Phone number<input name="phone" type="tel" required maxlength="30" autocomplete="tel"></label></div><label>Full delivery address<textarea name="address" required maxlength="600" rows="3" autocomplete="street-address"></textarea></label><label>Payment preference<select name="paymentMethod"><option>Pay on delivery</option><option>Cash on Delivery</option></select></label><div class="checkout-total"><span>Order total</span><strong id="checkoutTotal">₹0</strong></div><button class="button button-dark full" type="submit">Place order ↗</button><p class="tiny-note">No online payment is collected by this demo. Confirm order details before placing.</p><div id="checkoutMessage" role="status"></div></form></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="/app.js"></script>
+  <script src="/reviews.js"></script>
 </body>
 </html>

@@ -128,6 +128,7 @@ async function showDashboard() {
   $('#adminIdentity').textContent = `${currentAdmin.email} · ${owner ? 'Main Admin / Owner' : 'Admin'}`;
   $('#adminAccessTab')?.classList.toggle('hidden', !owner);
   $('#adminAccessPanel')?.classList.toggle('hidden', !owner);
+  $('#contactSettingsTab')?.classList.toggle('hidden', !owner);
   $('#orderDataTab')?.classList.toggle('hidden', !owner);
   $('#orderDataPanel')?.classList.toggle('hidden', !owner);
   updateAdminClock();
@@ -143,7 +144,9 @@ async function showDashboard() {
     loadOrders(),
     loadCustomers(),
     loadSiteImages(),
-    loadOfferBanners()
+    loadOfferBanners(),
+    loadAdminReviews(),
+    loadAdminContact()
   ]);
   await refreshPasswordResetNotifications();
   if (!window.passwordResetNotificationInterval) {
@@ -1352,6 +1355,127 @@ function setupOrderDataPanel() {
 
 setupOrderDataPanel();
 
+function setupReviewContactPanels() {
+  const tabs = $('.admin-tabs');
+  const panelAnchor = $('#orderDataPanel') || $('#customersPanel');
+  if (!tabs || !panelAnchor) return;
+  const reviewStyles = document.createElement('link');
+  reviewStyles.rel = 'stylesheet';
+  reviewStyles.href = '/review-ui.css';
+  document.head.append(reviewStyles);
+
+  tabs.insertAdjacentHTML('beforeend', `
+    <button class="admin-tab" data-tab="reviews" id="reviewsAdminTab" type="button">Reviews</button>
+    <button class="admin-tab" data-tab="contact-settings" id="contactSettingsTab" type="button">Contact details</button>`);
+  panelAnchor.insertAdjacentHTML('afterend', `
+    <section id="reviewsAdminPanel" class="admin-panel hidden">
+      <div class="panel-heading">
+        <div><h2>Customer reviews</h2><p class="muted">Approve reviews to publish them on the storefront.</p></div>
+        <div class="review-admin-tools">
+          <label for="reviewStatusFilter">Status</label>
+          <select id="reviewStatusFilter"><option value="pending">Pending</option><option value="all">All reviews</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select>
+          <button class="button button-outline" id="refreshReviews" type="button">Refresh</button>
+        </div>
+      </div>
+      <div id="adminReviewsList" class="admin-reviews-list" aria-live="polite"><p class="muted">Loading reviews...</p></div>
+    </section>
+    <section id="contactSettingsPanel" class="admin-panel hidden">
+      <div class="panel-heading"><div><h2>Store contact details</h2><p class="muted">Published on the storefront contact page.</p></div></div>
+      <form id="contactSettingsForm" class="admin-form contact-settings-form">
+        <label>Phone number<input name="phone" type="tel" maxlength="30" required></label>
+        <label>Email address<input name="email" type="email" maxlength="254" required></label>
+        <label>Store address<input name="address" maxlength="300" required></label>
+        <p id="contactSettingsMessage" class="auth-message" role="status" aria-live="polite"></p>
+        <button class="button button-dark" type="submit">Save contact details</button>
+      </form>
+    </section>`);
+}
+
+setupReviewContactPanels();
+
+async function loadAdminReviews() {
+  const container = $('#adminReviewsList');
+  if (!container) return;
+  const status = $('#reviewStatusFilter')?.value || 'pending';
+  try {
+    const result = await api(`/api/admin/reviews?status=${encodeURIComponent(status)}`);
+    container.innerHTML = result.reviews.length
+      ? result.reviews.map((review) => `
+        <article class="admin-review">
+          <div class="admin-review-heading">
+            <strong>${safe(review.customer_name)}</strong>
+            <span>${safe(review.customer_email)}</span>
+            <span class="status-tag review-status-${safe(review.status)}">${safe(review.status)}</span>
+          </div>
+          <div class="rating" aria-label="${safe(review.rating)} out of 5 stars">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</div>
+          <p>${safe(review.description)}</p>
+          <small>${safe(formatIST(review.created_at))}</small>
+          ${review.status === 'pending' ? `<div class="admin-review-actions"><button class="button button-dark" type="button" data-review-status="approved" data-review-id="${safe(review.id)}">Approve</button><button class="button button-outline" type="button" data-review-status="rejected" data-review-id="${safe(review.id)}">Reject</button></div>` : ''}
+        </article>`).join('')
+      : '<p class="muted">No reviews match this status.</p>';
+  } catch (error) {
+    container.innerHTML = `<p class="error-text">${safe(error.message)}</p>`;
+  }
+}
+
+async function loadAdminContact() {
+  const form = $('#contactSettingsForm');
+  if (!form) return;
+  const message = $('#contactSettingsMessage');
+  try {
+    const contact = await api('/api/admin/contact');
+    form.elements.phone.value = contact.phone;
+    form.elements.email.value = contact.email;
+    form.elements.address.value = contact.address;
+    form.querySelectorAll('input, button[type="submit"]').forEach((field) => { field.disabled = !contact.canEdit; });
+    message.textContent = contact.canEdit ? '' : 'Only the Main Admin can edit contact details.';
+  } catch (error) {
+    message.textContent = error.message;
+  }
+}
+
+$('#refreshReviews')?.addEventListener('click', loadAdminReviews);
+$('#reviewStatusFilter')?.addEventListener('change', loadAdminReviews);
+$('#reviewsAdminPanel')?.addEventListener('click', async (event) => {
+  const button = event.target.closest('[data-review-status]');
+  if (!button) return;
+  button.disabled = true;
+  try {
+    const result = await api(`/api/admin/reviews/${encodeURIComponent(button.dataset.reviewId)}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status: button.dataset.reviewStatus })
+    });
+    toast(result.message);
+    await loadAdminReviews();
+  } catch (error) {
+    toast(error.message);
+    button.disabled = false;
+  }
+});
+
+$('#contactSettingsForm')?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const button = form.querySelector('[type="submit"]');
+  const message = $('#contactSettingsMessage');
+  button.disabled = true;
+  message.textContent = '';
+  message.classList.remove('success');
+  try {
+    const result = await api('/api/admin/contact', {
+      method: 'PUT',
+      body: JSON.stringify(Object.fromEntries(new FormData(form)))
+    });
+    message.textContent = result.message;
+    message.classList.add('success');
+    toast(result.message);
+  } catch (error) {
+    message.textContent = error.message;
+  } finally {
+    button.disabled = false;
+  }
+});
+
 $('#clearOrderDataForm')?.addEventListener('submit', async (event) => {
   event.preventDefault();
   const form = event.currentTarget;
@@ -2037,6 +2161,8 @@ $$('[data-tab]').forEach((button) => {
     $('#categoriesPanel')?.classList.toggle('hidden', button.dataset.tab !== 'categories');
     $('#adminAccessPanel')?.classList.toggle('hidden', button.dataset.tab !== 'access-management');
     $('#orderDataPanel')?.classList.toggle('hidden', button.dataset.tab !== 'order-data');
+    $('#reviewsAdminPanel')?.classList.toggle('hidden', button.dataset.tab !== 'reviews');
+    $('#contactSettingsPanel')?.classList.toggle('hidden', button.dataset.tab !== 'contact-settings');
     $('#siteImagesPanel')?.classList.toggle('hidden', button.dataset.tab !== 'site-images');
     $('#offerBannerPanel')?.classList.toggle('hidden', button.dataset.tab !== 'offer-banner');
   });

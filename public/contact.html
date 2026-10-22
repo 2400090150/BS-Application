@@ -36,12 +36,12 @@
     <section class="section contact-grid">
       <div class="contact-card">
         <h3>Call or write</h3>
-        <p>+91 98765 43210</p>
-        <p>hello@bshandlooms.in</p>
+        <p><a id="contactPhone" href="tel:+918688012050">+91 86880 12050</a></p>
+        <p><a id="contactEmail" href="mailto:bs@handlooms.in">bs@handlooms.in</a></p>
       </div>
       <div class="contact-card">
         <h3>Visit us</h3>
-        <p>Hyderabad, India</p>
+        <p id="contactAddress">Hyderabad, India</p>
       </div>
       <div class="contact-card">
         <h3>Hours</h3>
@@ -66,5 +66,6 @@
   <div class="modal hidden" id="checkoutModal" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle"><div class="modal-head"><div><p class="eyebrow">ALMOST YOURS</p><h2 id="checkoutTitle">Delivery details</h2></div><button class="close-button" id="closeCheckout" aria-label="Close checkout">×</button></div><form id="checkoutForm" class="checkout-form"><label>Full name<input name="name" required maxlength="100" autocomplete="name"></label><div class="form-two"><label>Email address<input name="email" type="email" required autocomplete="email"></label><label>Phone number<input name="phone" type="tel" required maxlength="30" autocomplete="tel"></label></div><label>Full delivery address<textarea name="address" required maxlength="600" rows="3" autocomplete="street-address"></textarea></label><label>Payment preference<select name="paymentMethod"><option>Pay on delivery</option><option>Cash on Delivery</option></select></label><div class="checkout-total"><span>Order total</span><strong id="checkoutTotal">₹0</strong></div><button class="button button-dark full" type="submit">Place order ↗</button><p class="tiny-note">No online payment is collected by this demo. Confirm order details before placing.</p><div id="checkoutMessage" role="status"></div></form></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="/app.js"></script>
+  <script src="/contact.js"></script>
 </body>
 </html>

@@ -1,4 +1,5 @@
 const $ = (id) => document.getElementById(id);
+const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 let customer = null;
 let addresses = [];
 let editingAddressId = null;
@@ -8,6 +9,7 @@ let passwordResetLocked = false;
 let passwordResetEmail = '';
 let passwordResetCreateNew = false;
 let passwordResetHadActiveRequest = new URLSearchParams(location.search).get('password-reset') === 'required';
+let accountReviewRating = 0;
 const adminAccountView = document.createElement('section');
 adminAccountView.id = 'adminAccountView';
 adminAccountView.className = 'hidden';
@@ -399,8 +401,78 @@ async function renderAccount(profile) {
   setProfileEditing(false);
   message('profileMessage', '');
   $('ordersContainer').innerHTML = '<p class="muted">Loading your orders…</p>';
-  await Promise.all([loadAddresses(), loadOrders()]);
+  await Promise.all([loadAddresses(), loadOrders(), loadCustomerReviews()]);
 }
+
+async function loadCustomerReviews() {
+  const container = $('accountReviews');
+  if (!container) return;
+  try {
+    const response = await fetch('/api/auth/reviews', { credentials: 'same-origin', cache: 'no-store' });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Could not load your reviews.');
+    if (!result.reviews.length) {
+      container.innerHTML = '<p class="muted">You have not submitted a review yet.</p>';
+      return;
+    }
+    container.innerHTML = result.reviews.map((review) => `
+      <article class="customer-review-card">
+        <div class="customer-review-heading">
+          <span class="rating" aria-label="${review.rating} out of 5 stars">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</span>
+          <span class="review-status review-status-${escapeHtml(review.status)}">${escapeHtml(review.status)}</span>
+        </div>
+        <p>${escapeHtml(review.description)}</p>
+        <small>${escapeHtml(formatAccountDate(review.created_at))}</small>
+      </article>
+    `).join('');
+  } catch (error) {
+    container.innerHTML = `<p class="auth-message">${escapeHtml(error.message)}</p>`;
+  }
+}
+
+$$('[data-review-rating]').forEach((button) => {
+  button.addEventListener('click', () => {
+    accountReviewRating = Number(button.dataset.reviewRating);
+    $$('[data-review-rating]').forEach((star) => {
+      const selected = Number(star.dataset.reviewRating) <= accountReviewRating;
+      star.classList.toggle('selected', selected);
+      star.setAttribute('aria-checked', Number(star.dataset.reviewRating) === accountReviewRating ? 'true' : 'false');
+    });
+  });
+});
+
+$('accountReviewForm')?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const messageElement = $('accountReviewMessage');
+  const submitButton = form.querySelector('[type="submit"]');
+  messageElement.textContent = '';
+  submitButton.disabled = true;
+  try {
+    const response = await fetch('/api/reviews', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ rating: accountReviewRating, description: form.elements.description.value })
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Could not submit your review.');
+    form.reset();
+    accountReviewRating = 0;
+    $$('[data-review-rating]').forEach((star) => {
+      star.classList.remove('selected');
+      star.setAttribute('aria-checked', 'false');
+    });
+    messageElement.textContent = result.message;
+    messageElement.classList.add('success');
+    await loadCustomerReviews();
+  } catch (error) {
+    messageElement.textContent = error.message;
+    messageElement.classList.remove('success');
+  } finally {
+    submitButton.disabled = false;
+  }
+});
 
 async function loadOrders() {
   try {
