@@ -63,3 +63,4 @@
 @media(max-width:760px){.brand-logo{width:96px}.footer-brand .brand-logo{width:132px}}
 .bag-button #cartCount{position:absolute;right:4px;bottom:3px;display:grid;place-items:center;width:15px;height:15px;margin:0;border:1px solid var(--paper);border-radius:50%;background:var(--clay);color:#fff;font-size:8px;line-height:1;font-weight:700}
 .bag-button:focus-visible{outline:2px solid var(--clay);outline-offset:3px}
+@media(max-width:760px){#newCollectionGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:25px 12px}#newCollectionGrid .product-meta{display:block}#newCollectionGrid .product-price{display:block;margin-top:7px}}
