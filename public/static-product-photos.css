@@ -19,3 +19,29 @@
   max-height: none;
   object-fit: contain;
 }
+
+#newCollectionGrid .new-collection-product-details {
+  margin: 9px 0 0;
+  color: var(--ink);
+  font-size: 11px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+#newCollectionGrid .new-collection-product-details span {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+#newCollectionGrid .product-prices {
+  max-width: 100%;
+  justify-content: flex-start;
+}
+
+#newCollectionGrid .product-price {
+  color: var(--clay);
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}

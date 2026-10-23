@@ -207,7 +207,7 @@ function filteredProducts() {
 }
 
 function renderProductCardGrid(container, items, options = {}) {
-  const { emptyText = "No pieces found.", showOfferPrice = false } = options;
+  const { emptyText = "No pieces found.", showOfferPrice = false, showProductDetails = false } = options;
   if (!container) return;
 
   container.innerHTML = (items && items.length)
@@ -216,6 +216,7 @@ function renderProductCardGrid(container, items, options = {}) {
         const productId = product.id;
         const name = product.name || "Untitled product";
         const category = product.category || "";
+        const description = product.description || "";
         const fallbackImage = window.siteImageFallback || "https://images.unsplash.com/photo-1601924994987-69e26d50dc26?auto=format&fit=crop&w=700&q=80";
         const image = product.image || fallbackImage;
         const stock = Number(product.stock || 0);
@@ -242,6 +243,7 @@ function renderProductCardGrid(container, items, options = {}) {
               </div>
               ${offerMarkup}
             </div>
+            ${showProductDetails && description ? `<p class="new-collection-product-details"><span>Size &amp; blouse details:</span> ${safe(description)}</p>` : ""}
             <div class="stock-note">${outOfStock ? "Out of stock" : (stock <= 5 ? `Only ${stock} left` : "Ready to order")}</div>
           </article>`;
       }).join("")
@@ -261,7 +263,7 @@ function renderProducts() {
 function renderCollectionGrid(items = []) {
   const grid = $("#newCollectionGrid");
   if (!grid) return;
-  renderProductCardGrid(grid, items, { emptyText: "No new arrivals yet. Check back soon." });
+  renderProductCardGrid(grid, items, { emptyText: "No new arrivals yet. Check back soon.", showProductDetails: true });
 }
 
 function renderBannerList(banners = []) {

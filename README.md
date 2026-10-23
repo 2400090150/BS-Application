@@ -29,7 +29,7 @@ The database is created automatically at `data/store.sqlite`; sample products ar
 ## Deploy on Render
 1. Push this repository to GitHub and create a new Render Blueprint using `render.yaml`.
 2. Render creates the Node web service and a persistent disk for the SQLite database and uploaded images. The disk requires a paid Render plan.
-3. The first start safely copies the committed `data/store.sqlite` and uploaded images to the persistent disk if it is empty. Later deploys keep the disk data.
+3. The first start safely copies the committed `data/store.sqlite` and uploaded images to the persistent disk if it is empty. Later code deploys keep the existing database and uploads; the startup script does not replace an existing database. Keep deploying to the same service with its disk attached—deleting the service or disk can remove admin-managed products, orders, settings, and uploaded images.
 4. Render generates `SESSION_SECRET` and sets production mode and the persistent data directory. Do not add `.env` or secrets to Git.
 5. To enable email-based password recovery, add `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`, and `APP_BASE_URL` in the Render service's environment settings. Google sign-in and Drive image import are optional; set `GOOGLE_CLIENT_ID`, `GOOGLE_DRIVE_API_KEY`, and `GOOGLE_DRIVE_APP_ID` to enable them.
 6. After deployment, open the service URL and verify the storefront and sign-in pages. Configure the deployed domain in Google OAuth settings if Google sign-in is enabled.
