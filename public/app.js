@@ -307,7 +307,7 @@ function renderOfferBanner(sectionSelector, imageSelector, banner = {}) {
 function syncHomepageModuleVisibility(data = {}) {
   const collectionSection = $("#newCollectionSection");
   const specialOfferSection = $("#specialOfferSection");
-  if (collectionSection) collectionSection.classList.remove("hidden");
+  if (collectionSection) collectionSection.classList.toggle("hidden", !(data.collection || []).length);
   const offerBanners = data.offerBanners || { home: data.offerBanner };
   renderOfferBanner("#offersBannerSection", "#homeOfferBannerImage", offerBanners.home || {});
   renderOfferBanner("#collectionOfferBannerSection", "#collectionOfferBannerImage", offerBanners.newCollection || {});
